@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    tools {
-        // O tipo correto é "hudson.plugins.sonar.SonarRunnerInstallation"
-        hudson.plugins.sonar.SonarRunnerInstallation 'SonarQubeScanner'
-    }
     stages {
         stage('Checkout') {
             steps {
@@ -13,8 +9,11 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool 'SonarQubeScanner' // Nome configurado no Jenkins
-                    withSonarQubeEnv('SonarQube') { // Nome do servidor configurado no Jenkins
+                    // Referencia o SonarQube Scanner configurado no Jenkins
+                    def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    
+                    // Configura o ambiente do SonarQube
+                    withSonarQubeEnv('SonarQube') { // Nome configurado na seção SonarQube Servers
                         sh """
                         ${scannerHome}/bin/sonar-scanner \
                         -Dsonar.projectKey=juice-shop-lab \
